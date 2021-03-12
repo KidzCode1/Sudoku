@@ -22,15 +22,14 @@ namespace Sudoku
 	{
 		Square[,] squares = new Square[9, 9];
 		Square selectedSquare;
+		public static string availableChars;
 		public Square SelectedSquare
 		{
 			get => selectedSquare;
 			set
 			{
 				if (selectedSquare == value)
-				{
 					return;
-				}
 
 				Square oldSelectedSquare = selectedSquare;
 				if (oldSelectedSquare != null)
@@ -43,7 +42,6 @@ namespace Sudoku
 		public MainWindow()
 		{
 			InitializeComponent();
-
 			squares[0, 0] = new Square(tbx0_0);
 			squares[0, 1] = new Square(tbx0_1);
 			squares[0, 2] = new Square(tbx0_2);
@@ -144,17 +142,19 @@ namespace Sudoku
 				GetSquarePosition(SelectedSquare, out int row, out int column);
 				SelectSquare(row, column + 1);
 			}
-			
+
 			if (e.Key == Key.Left)
 			{
 				GetSquarePosition(SelectedSquare, out int row, out int column);
 				SelectSquare(row, column - 1);
 			}
+
 			if (e.Key == Key.Down)
 			{
 				GetSquarePosition(SelectedSquare, out int row, out int column);
-				SelectSquare(row + 1, column );
+				SelectSquare(row + 1, column);
 			}
+
 			if (e.Key == Key.Up)
 			{
 				GetSquarePosition(SelectedSquare, out int row, out int column);
@@ -162,7 +162,7 @@ namespace Sudoku
 			}
 		}
 
-		private void SelectSquare(int row, int column)
+		void SelectSquare(int row, int column)
 		{
 			if (column >= 9)
 				column -= 9;
@@ -183,17 +183,28 @@ namespace Sudoku
 		{
 			for (int c = 0; c < 9; c++)
 				for (int r = 0; r < 9; r++)
-				{
 					if (squares[r, c] == square)
 					{
 						row = r;
 						column = c;
 						return;
 					}
-				}
-
 			row = -1;
 			column = -1;
+		}
+
+		void SetAvailableCharacters()
+		{
+			availableChars = tbxAvailableCharacter.Text.Trim();
+			if (availableChars.Length != 9)
+				Background = new SolidColorBrush(Colors.Red);
+			else
+				Background = new SolidColorBrush(Colors.White);
+		}
+
+		private void tbxAvailableCharacter_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			SetAvailableCharacters();
 		}
 	}
 }
