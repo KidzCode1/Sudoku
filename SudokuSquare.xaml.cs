@@ -20,6 +20,8 @@ namespace Sudoku
 	/// </summary>
 	public partial class SudokuSquare : UserControl
 	{
+		public bool Locked { get; set; }
+		public string Notes { get; set; }
 		public SudokuSquare()
 		{
 			InitializeComponent();
@@ -41,6 +43,63 @@ namespace Sudoku
 					else
 						textBox.Text = " ";
 				}
+			}
+		}
+
+		private void Border_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+		{
+			tbxValue.Focus();
+		}
+
+		public void ShowSelection()
+		{
+			Border.Background = new SolidColorBrush(Color.FromRgb(255, 244, 176));
+			tbxValue.Focus();
+		}
+
+		public void HideSelection()
+		{
+			Border.Background = null;
+		}
+
+		public void Clear()
+		{
+			tbxValue.Text = "";
+			tbNotes.Text = "";
+		}
+
+		public void SetText(string text)
+		{
+			tbxValue.Text = text;
+		}
+
+		public string GetText()
+		{
+			return tbxValue.Text;
+		}
+
+		public char Char
+		{
+			get
+			{
+				if (tbxValue.Text.Length > 0)
+					return tbxValue.Text[0];
+				return char.MinValue;
+			}
+		}
+		
+
+		public void SetNotes(string notes)
+		{
+			tbNotes.Text = notes;
+		}
+
+		public void FillFromNotesIfPossible()
+		{
+			if (tbNotes.Text.Length == 1)
+			{
+				tbxValue.Text = tbNotes.Text;
+				tbNotes.Text = "";
 			}
 		}
 	}
