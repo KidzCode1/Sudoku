@@ -20,6 +20,21 @@ namespace Sudoku
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		/* 
+	 ![](39E2DF101A5C3558D58B7B46582D30B6.png;;;0.02032,0.02032)
+	 */
+		string initialGame = @"
+53  7
+6  195
+ 98    6
+8   6   3
+4  8 3  1
+7   2   6
+ 6    28 
+   419  5
+    8  7 9
+";
+
 		Square[,] squares = new Square[9, 9];
 		Square selectedSquare;
 		public static string availableChars;
