@@ -134,7 +134,7 @@ namespace Sudoku
 
 			SelectedSquare = squares[0, 0];
 		}
-
+		
 		private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.Key == Key.Right)
