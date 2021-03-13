@@ -203,7 +203,7 @@ namespace Sudoku
 
 
 		// ![](39E2DF101A5C3558D58B7B46582D30B6.png;;;0.01546,0.01546)
-		string initialGame = @"53  7
+		string easyGame = @"53  7
 6  195
  98    6
 8   6   3
@@ -213,6 +213,16 @@ namespace Sudoku
    419  5
     8  79
 ";
+
+		string hardGame = @"6     53
+     27
+5 7 96 18
+  6  1 8
+ 98
+    2
+      9
+   2   43
+31   9 62";
 
 		void ClearGame()
 		{
@@ -244,7 +254,11 @@ namespace Sudoku
 
 		private void btnTest_Click(object sender, RoutedEventArgs e)
 		{
-			SetUpGame(initialGame);
+			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+				SetUpGame(hardGame);
+			else
+				SetUpGame(easyGame);
+			
 		}
 
 		SudokuSquare[] GetColumn(int column)
@@ -337,6 +351,13 @@ namespace Sudoku
 			for (int c = 0; c < 9; c++)
 				for (int r = 0; r < 9; r++)
 					ShowNotesForSquare(squares[r, c]);
+		}
+
+		private void btnClearNotes_Click(object sender, RoutedEventArgs e)
+		{
+			for (int c = 0; c < 9; c++)
+				for (int r = 0; r < 9; r++)
+					squares[r, c].ClearNotes();
 		}
 	}
 }

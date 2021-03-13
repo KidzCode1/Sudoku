@@ -137,6 +137,9 @@
                 <Button x:Name="btnSolve" Padding="20,4,20,4" Click="btnSolve_Click" Margin="4">
                     Solve!
                 </Button>
+                <Button x:Name="btnClearNotes" Padding="20,4,20,4" Click="btnClearNotes_Click" Margin="4">
+                    Clear Notes!
+                </Button>
             </StackPanel>
         </StackPanel>
     </StackPanel>

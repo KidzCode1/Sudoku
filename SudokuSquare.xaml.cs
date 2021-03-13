@@ -102,5 +102,9 @@ namespace Sudoku
 				tbNotes.Text = "";
 			}
 		}
+		public void ClearNotes()
+		{
+			tbNotes.Text = "";
+		}
 	}
 }
