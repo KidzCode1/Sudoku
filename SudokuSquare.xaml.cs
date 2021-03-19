@@ -20,13 +20,66 @@ namespace Sudoku
 	/// </summary>
 	public partial class SudokuSquare : UserControl
 	{
-		public bool Locked { get; set; }
+		public event EventHandler ValueChanged;
+		public bool HasConflict
+		{
+			get => hasConflict;
+			set
+			{
+				if (hasConflict == value)
+					return;
+
+				hasConflict = value;
+
+				if (hasConflict)
+				{
+					Grid1.Background = new SolidColorBrush(Color.FromRgb(255, 148, 148));
+				}
+				else
+				{
+					Grid1.Background = null;
+				}
+			}
+		}
+		
+		bool hasConflict;
+
+		bool locked;
+		public bool Locked
+		{
+			get
+			{
+				return locked;
+			}
+			set
+			{
+				if (locked == value)
+					return;
+
+				locked = value;
+				if (locked)
+				{
+					tbxValue.Foreground = new SolidColorBrush(Color.FromRgb(68, 72, 99));
+					tbxValue.IsReadOnly = true;
+				}
+				else
+				{
+					tbxValue.Foreground = new SolidColorBrush(Colors.Black);
+					tbxValue.IsReadOnly = false;
+				}
+			}
+		}
+
 		public string Notes { get; set; }
 		public SudokuSquare()
 		{
 			InitializeComponent();
 		}
 
+		protected virtual void OnValueChanged(object sender, EventArgs e)
+		{
+			ValueChanged?.Invoke(sender, e);
+		}
 		private void tbxValue_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			if (e.Changes != null)
@@ -38,10 +91,14 @@ namespace Sudoku
 					string whatChanged = lineText.Substring(textChange.Offset, textChange.AddedLength);
 					if (MainWindow.availableChars.Contains(whatChanged))
 					{
-						textBox.Text = whatChanged;
+						if (textBox.Text != whatChanged)
+							textBox.Text = whatChanged;
 					}
-					else
+					else if (textBox.Text != " ")
+					{
 						textBox.Text = " ";
+					}
+					OnValueChanged(this, EventArgs.Empty);
 				}
 			}
 		}

@@ -126,6 +126,8 @@ namespace Sudoku
 			squares[8, 7] = tbx8_7;
 			squares[8, 8] = tbx8_8;
 
+			HookEvents();
+
 			SelectedSquare = squares[0, 0];
 		}
 		
@@ -226,6 +228,8 @@ namespace Sudoku
 
 		void ClearGame()
 		{
+			ClearAllConflicts();
+
 			for (int c = 0; c < 9; c++)
 				for (int r = 0; r < 9; r++)
 					squares[r, c].Clear();
@@ -237,27 +241,39 @@ namespace Sudoku
 			{
 				char chr = line[column];
 				if (chr != ' ')
+				{
 					squares[row, column].SetText(chr.ToString());
+					squares[row, column].Locked = true;
+				}
 			}
 		}
-		void SetUpGame(string gameStr)
+		bool loadingGame;
+		void LoadGame(string gameStr)
 		{
-			ClearGame();
-			string[] lines = gameStr.Split('\n');
-			int row = 0;
-			foreach (string line in lines)
+			loadingGame = true;
+			try
 			{
-				AddValuesForLine(row, line.TrimEnd());
-				row++;
+				ClearGame();
+				string[] lines = gameStr.Split('\n');
+				int row = 0;
+				foreach (string line in lines)
+				{
+					AddValuesForLine(row, line.TrimEnd());
+					row++;
+				}
+			}
+			finally
+			{
+				loadingGame = false;
 			}
 		}
 
 		private void btnTest_Click(object sender, RoutedEventArgs e)
 		{
 			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
-				SetUpGame(hardGame);
+				LoadGame(hardGame);
 			else
-				SetUpGame(easyGame);
+				LoadGame(easyGame);
 			
 		}
 
@@ -304,8 +320,6 @@ namespace Sudoku
 					availableChars.Remove(thisChar);
 			}
 		}
-
-
 
 		private void btnFill_Click(object sender, RoutedEventArgs e)
 		{
@@ -359,5 +373,87 @@ namespace Sudoku
 				for (int r = 0; r < 9; r++)
 					squares[r, c].ClearNotes();
 		}
+
+		private void btnConflictToggle_Click(object sender, RoutedEventArgs e)
+		{
+			SelectedSquare.HasConflict = !SelectedSquare.HasConflict;
+		}
+
+		void HookEvents()
+		{
+			for (int row = 0; row < 9; row++)
+				for (int column = 0; column < 9; column++)
+					squares[row, column].ValueChanged += SudokuSquare_ValueChanged;
+				
+		}
+
+		void ShowConflicts()
+		{
+			ClearAllConflicts();
+
+			for (int r = 0; r < 9; r++)
+				for (int c = 0; c < 9; c++)
+				{
+					SudokuSquare thisSquare = squares[r, c];
+					string text = thisSquare.GetText();
+					if (string.IsNullOrWhiteSpace(text))
+						continue;
+
+					SudokuSquare[] column = GetColumn(c);
+					SudokuSquare[] row = GetRow(r);
+					SudokuSquare[] block = GetBlock(r, c);
+					for (int rowIndex = 0; rowIndex < 9; rowIndex++)
+						if (rowIndex != r && column[rowIndex].GetText() == text)
+						{
+							thisSquare.HasConflict = true;
+							column[rowIndex].HasConflict = true;
+						}
+
+					for (int colIndex = 0; colIndex < 9; colIndex++)
+						if (colIndex != c && row[colIndex].GetText() == text)
+						{
+							thisSquare.HasConflict = true;
+							row[colIndex].HasConflict = true;
+						}
+
+					for (int squareIndex = 0; squareIndex < 9; squareIndex++)
+					{
+						GetSquarePosition(block[squareIndex], out int blockRow, out int blockColumn);
+						if (blockRow == r && blockColumn == c)
+							continue;
+
+						if (block[squareIndex].GetText() == text)
+						{
+							thisSquare.HasConflict = true;
+							block[squareIndex].HasConflict = true;
+						}
+					}
+				}
+		}
+
+		private void ClearAllConflicts()
+		{
+			for (int r = 0; r < 9; r++)
+				for (int c = 0; c < 9; c++)
+					squares[r, c].HasConflict = false;
+		}
+
+		private void SudokuSquare_ValueChanged(object sender, EventArgs e)
+		{
+			if (loadingGame)
+			{
+				return;
+			}
+			else
+			{
+				ShowConflicts();
+			}
+		}
+
+		//private void Button1_Click(object sender, RoutedEventArgs e)
+		//{
+		//	if (SelectedSquare != null)
+		//		SelectedSquare.Locked = !SelectedSquare.Locked;
+		//}
 	}
 }

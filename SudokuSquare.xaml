@@ -12,7 +12,7 @@
                 <RowDefinition Height="10"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBox x:Name="tbxValue" FontSize="38" HorizontalAlignment="Center" FontWeight="Black" Background="Transparent" BorderThickness="0" Margin="8,6,10,-5" Grid.RowSpan="2" TextChanged="tbxValue_TextChanged" >
+            <TextBox x:Name="tbxValue" FontSize="38" HorizontalAlignment="Center" FontWeight="Black" Background="Transparent" BorderThickness="0" Margin="8,6,10,-5" TextAlignment="Center" Grid.RowSpan="2" TextChanged="tbxValue_TextChanged" MinWidth="50" >
                 
             </TextBox>
             <TextBlock x:Name="tbNotes" Text="" Width="Auto" Height="Auto" FontSize="12" Margin="7,0,2,44" Foreground="#FF636363" Grid.RowSpan="2"/>
