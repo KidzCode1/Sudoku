@@ -274,7 +274,6 @@ namespace Sudoku
 				LoadGame(hardGame);
 			else
 				LoadGame(easyGame);
-			
 		}
 
 		SudokuSquare[] GetColumn(int column)
@@ -296,7 +295,7 @@ namespace Sudoku
 		}
 
 		SudokuSquare[] GetBlock(int row, int column)
-		{
+		 {
 			int topRow = 3 * (int)Math.Floor((double)row / 3); 
 			int leftColumn = 3 * (int)Math.Floor((double)column / 3);  
 			SudokuSquare[] result = new SudokuSquare[9];
@@ -311,11 +310,11 @@ namespace Sudoku
 			return result;
 		}
 
-		void RemoveChars(List<char> availableChars, SudokuSquare[] row)
+		void RemoveCharactersFromGroup(List<char> availableChars, SudokuSquare[] group)
 		{
 			for (int i = 0; i < 9; i++)
 			{
-				char thisChar = row[i].Char;
+				char thisChar = group[i].Char;
 				if (availableChars.Contains(thisChar))
 					availableChars.Remove(thisChar);
 			}
@@ -347,9 +346,9 @@ namespace Sudoku
 			foreach (char item in tbxAvailableCharacter.Text)
 				availableChars.Add(item);
 
-			RemoveChars(availableChars, row);
-			RemoveChars(availableChars, column);
-			RemoveChars(availableChars, block);
+			RemoveCharactersFromGroup(availableChars, row);
+			RemoveCharactersFromGroup(availableChars, column);
+			RemoveCharactersFromGroup(availableChars, block);
 
 			square.SetNotes(string.Join(", ", availableChars));
 		}
