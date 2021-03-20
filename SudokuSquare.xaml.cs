@@ -18,7 +18,7 @@ namespace Sudoku
 	/// <summary>
 	/// Interaction logic for SudokuSquare.xaml
 	/// </summary>
-	public partial class SudokuSquare : UserControl
+	public partial class SudokuSquare : UserControl, ISudokuSquare
 	{
 		public event EventHandler ValueChanged;
 		public bool HasConflict
@@ -70,7 +70,18 @@ namespace Sudoku
 			}
 		}
 
-		public string Notes { get; set; }
+		public string Notes 
+		{ 
+			get
+			{
+				return tbNotes.Text;
+			}
+			set
+			{
+				tbNotes.Text = value;
+			}
+		}
+
 		public SudokuSquare()
 		{
 			InitializeComponent();
@@ -135,7 +146,7 @@ namespace Sudoku
 			return tbxValue.Text;
 		}
 
-		public char Char
+		public char Value
 		{
 			get
 			{

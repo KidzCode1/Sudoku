@@ -55,6 +55,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BaseGroupSolver.cs" />
+    <Compile Include="ISudokuSquare.cs" />
+    <Compile Include="Solver2x2.cs" />
+    <Compile Include="Solver3x3.cs" />
     <Compile Include="SudokuSquare.xaml.cs">
       <DependentUpon>SudokuSquare.xaml</DependentUpon>
     </Compile>

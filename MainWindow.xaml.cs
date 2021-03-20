@@ -20,6 +20,7 @@ namespace Sudoku
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		List<BaseGroupSolver> solvers = new List<BaseGroupSolver>();
 		SudokuSquare[,] squares = new SudokuSquare[9, 9];
 		SudokuSquare selectedSquare;
 		public static string availableChars;
@@ -42,6 +43,15 @@ namespace Sudoku
 		public MainWindow()
 		{
 			InitializeComponent();
+			InitializeSquares();
+			InitializeSolvers();
+			HookEvents();
+
+			SelectedSquare = squares[0, 0];
+		}
+
+		private void InitializeSquares()
+		{
 			squares[0, 0] = tbx0_0;
 			squares[0, 1] = tbx0_1;
 			squares[0, 2] = tbx0_2;
@@ -125,10 +135,6 @@ namespace Sudoku
 			squares[8, 6] = tbx8_6;
 			squares[8, 7] = tbx8_7;
 			squares[8, 8] = tbx8_8;
-
-			HookEvents();
-
-			SelectedSquare = squares[0, 0];
 		}
 
 		private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -326,7 +332,7 @@ namespace Sudoku
 		{
 			for (int i = 0; i < 9; i++)
 			{
-				char thisChar = group[i].Char;
+				char thisChar = group[i].Value;
 				if (availableChars.Contains(thisChar))
 					availableChars.Remove(thisChar);
 			}
@@ -369,6 +375,30 @@ namespace Sudoku
 		{
 			FillFromAllNotes();
 			RefreshAllNotes();
+			ApplySolvers();
+			//if ()
+			//	RefreshAllNotes();
+		}
+
+		private bool ApplySolvers()
+		{
+			bool squaresSolved = false;
+			foreach (BaseGroupSolver sudokuSolver in solvers)
+			{
+				// Calling solve 27 times for all the rows, columns, and blocks.
+				for (int c = 0; c < 9; c++)
+					if (sudokuSolver.Solve(GetColumn(c)) == SolveResult.SquaresSolved)
+						squaresSolved = true;
+				for (int r = 0; r < 9; r++)
+					if (sudokuSolver.Solve(GetColumn(r)) == SolveResult.SquaresSolved)
+						squaresSolved = true;
+				for (int r = 0; r < 3; r++)
+					for (int c = 0; c < 3; c++)
+						if (sudokuSolver.Solve(GetBlock(r * 3, c * 3)) == SolveResult.SquaresSolved)
+							squaresSolved = true;
+			}
+
+			return squaresSolved;
 		}
 
 		private void RefreshAllNotes()
@@ -459,6 +489,12 @@ namespace Sudoku
 			{
 				ShowConflicts();
 			}
+		}
+
+		void InitializeSolvers()
+		{
+			solvers.Add(new Solver2x2());
+			solvers.Add(new Solver3x3());
 		}
 
 		//private void Button1_Click(object sender, RoutedEventArgs e)
