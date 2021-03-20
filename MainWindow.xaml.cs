@@ -243,8 +243,6 @@ namespace Sudoku
 
 		void ClearGame()
 		{
-			ClearAllConflicts();
-
 			for (int c = 0; c < 9; c++)
 				for (int r = 0; r < 9; r++)
 					squares[r, c].Clear();
