@@ -130,7 +130,7 @@ namespace Sudoku
 
 			SelectedSquare = squares[0, 0];
 		}
-		
+
 		private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.Key == Key.Right)
@@ -225,6 +225,15 @@ namespace Sudoku
       9
    2   43
 31   9 62";
+		string mediumGame = @"         
+     3 85
+  1 2    
+   5 7   
+  4   1  
+ 9       
+5      73
+  2 1    
+    4   9";
 
 		void ClearGame()
 		{
@@ -271,7 +280,10 @@ namespace Sudoku
 		private void btnTest_Click(object sender, RoutedEventArgs e)
 		{
 			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
-				LoadGame(hardGame);
+				if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+					LoadGame(mediumGame);
+				else
+					LoadGame(hardGame);
 			else
 				LoadGame(easyGame);
 		}
@@ -295,9 +307,9 @@ namespace Sudoku
 		}
 
 		SudokuSquare[] GetBlock(int row, int column)
-		 {
-			int topRow = 3 * (int)Math.Floor((double)row / 3); 
-			int leftColumn = 3 * (int)Math.Floor((double)column / 3);  
+		{
+			int topRow = 3 * (int)Math.Floor((double)row / 3);
+			int leftColumn = 3 * (int)Math.Floor((double)column / 3);
 			SudokuSquare[] result = new SudokuSquare[9];
 			int index = 0;
 			for (int r = topRow; r < topRow + 3; r++)
@@ -383,7 +395,7 @@ namespace Sudoku
 			for (int row = 0; row < 9; row++)
 				for (int column = 0; column < 9; column++)
 					squares[row, column].ValueChanged += SudokuSquare_ValueChanged;
-				
+
 		}
 
 		void ShowConflicts()
