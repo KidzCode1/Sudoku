@@ -374,8 +374,6 @@ namespace Sudoku
 			FillFromAllNotes();
 			RefreshAllNotes();
 			ApplySolvers();
-			//if ()
-			//	RefreshAllNotes();
 		}
 
 		private bool ApplySolvers()
