@@ -8,7 +8,7 @@ namespace Sudoku
 	{
 		public abstract SolveResult Solve(ISudokuSquare[] group);   // I'm not going to implement it here.
 
-		public List<int> GetNumbers(string notes)
+		public static List<int> GetNumbers(string notes)
 		{
 			List<int> result = new List<int>();
 			string[] splitStr = notes.Split(',');

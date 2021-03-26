@@ -57,8 +57,10 @@
     </ApplicationDefinition>
     <Compile Include="BaseGroupSolver.cs" />
     <Compile Include="ISudokuSquare.cs" />
+    <Compile Include="OnlyOneSolver.cs" />
     <Compile Include="Solver2x2.cs" />
     <Compile Include="Solver3x3.cs" />
+    <Compile Include="SolveResult.cs" />
     <Compile Include="SudokuSquare.xaml.cs">
       <DependentUpon>SudokuSquare.xaml</DependentUpon>
     </Compile>

@@ -20,6 +20,7 @@ namespace Sudoku
 	/// </summary>
 	public partial class SudokuSquare : UserControl, ISudokuSquare
 	{
+		public static bool Updating { get; set; }
 		public event EventHandler ValueChanged;
 		public bool HasConflict
 		{
@@ -93,6 +94,8 @@ namespace Sudoku
 		}
 		private void tbxValue_TextChanged(object sender, TextChangedEventArgs e)
 		{
+			if (Updating)
+				return;
 			if (e.Changes != null)
 			{
 				if (sender is TextBox textBox)
@@ -152,12 +155,19 @@ namespace Sudoku
 		{
 			get
 			{
-				if (tbxValue.Text.Length > 0)
+				if (tbxValue.Text.Length > 0 && tbxValue.Text != " ")
 					return tbxValue.Text[0];
 				return char.MinValue;
 			}
+			set
+			{
+				tbxValue.Text = value.ToString();
+			}
 		}
-		
+
+		public bool IsEmpty => Value == char.MinValue || Value == '\0';
+		public bool HasTestValue { get; set; }
+
 
 		public void SetNotes(string notes)
 		{

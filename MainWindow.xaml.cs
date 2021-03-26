@@ -424,6 +424,65 @@ namespace Sudoku
 
 		}
 
+		bool HasConflicts(int r, int c)
+		{
+			return CheckForConflicts(r, c, false);
+		}
+
+		bool CheckForConflicts(int r, int c, bool setHasConflictedProperty = true)
+		{
+			SudokuSquare thisSquare = squares[r, c];
+			string text = thisSquare.GetText();
+			if (string.IsNullOrWhiteSpace(text))
+				return false;
+
+			SudokuSquare[] column = GetColumn(c);
+			SudokuSquare[] row = GetRow(r);
+			SudokuSquare[] block = GetBlock(r, c);
+
+			bool isConflicted = false;
+			for (int rowIndex = 0; rowIndex < 9; rowIndex++)
+				if (rowIndex != r && column[rowIndex].GetText() == text)
+				{
+					if (setHasConflictedProperty)
+					{
+						thisSquare.HasConflict = true;
+						column[rowIndex].HasConflict = true;
+					}
+					isConflicted = true;
+				}
+
+			for (int colIndex = 0; colIndex < 9; colIndex++)
+				if (colIndex != c && row[colIndex].GetText() == text)
+				{
+					if (setHasConflictedProperty)
+					{
+						thisSquare.HasConflict = true;
+						row[colIndex].HasConflict = true;
+					}
+					isConflicted = true;
+				}
+
+			for (int squareIndex = 0; squareIndex < 9; squareIndex++)
+			{
+				GetSquarePosition(block[squareIndex], out int blockRow, out int blockColumn);
+				if (blockRow == r && blockColumn == c)
+					continue;
+
+				if (block[squareIndex].GetText() == text)
+				{
+					if (setHasConflictedProperty)
+					{
+						thisSquare.HasConflict = true;
+						block[squareIndex].HasConflict = true;
+					}
+					isConflicted = true;
+				}
+			}
+
+			return isConflicted;
+		}
+
 		void ShowConflicts()
 		{
 			ClearAllConflicts();
@@ -431,40 +490,7 @@ namespace Sudoku
 			for (int r = 0; r < 9; r++)
 				for (int c = 0; c < 9; c++)
 				{
-					SudokuSquare thisSquare = squares[r, c];
-					string text = thisSquare.GetText();
-					if (string.IsNullOrWhiteSpace(text))
-						continue;
-
-					SudokuSquare[] column = GetColumn(c);
-					SudokuSquare[] row = GetRow(r);
-					SudokuSquare[] block = GetBlock(r, c);
-					for (int rowIndex = 0; rowIndex < 9; rowIndex++)
-						if (rowIndex != r && column[rowIndex].GetText() == text)
-						{
-							thisSquare.HasConflict = true;
-							column[rowIndex].HasConflict = true;
-						}
-
-					for (int colIndex = 0; colIndex < 9; colIndex++)
-						if (colIndex != c && row[colIndex].GetText() == text)
-						{
-							thisSquare.HasConflict = true;
-							row[colIndex].HasConflict = true;
-						}
-
-					for (int squareIndex = 0; squareIndex < 9; squareIndex++)
-					{
-						GetSquarePosition(block[squareIndex], out int blockRow, out int blockColumn);
-						if (blockRow == r && blockColumn == c)
-							continue;
-
-						if (block[squareIndex].GetText() == text)
-						{
-							thisSquare.HasConflict = true;
-							block[squareIndex].HasConflict = true;
-						}
-					}
+					CheckForConflicts(r, c);
 				}
 		}
 
@@ -491,6 +517,61 @@ namespace Sudoku
 		{
 			solvers.Add(new Solver2x2());
 			solvers.Add(new Solver3x3());
+			solvers.Add(new OnlyOneSolver());
+		}
+
+		bool AllSquaresAreFilled()
+		{
+			for (int row = 0; row < 9; row++)
+				for (int column = 0; column < 9; column++)
+				{
+					SudokuSquare sudokuSquare = squares[row, column];
+					if (sudokuSquare.IsEmpty)
+						return false;
+				}
+			return true;
+		}
+
+		bool BruteForceAttack(int startingRow = 0, int startingColumn = 0)
+		{
+			for (int row = startingRow; row < 9; row++)
+				for (int column = startingColumn; column < 9; column++)
+				{
+					startingColumn = 0;
+					SudokuSquare sudokuSquare = squares[row, column];
+					if (!sudokuSquare.IsEmpty)
+						continue;
+					// Magic - I have an empty square!!!
+					List<int> notes = BaseGroupSolver.GetNumbers(sudokuSquare.Notes);
+					foreach (int number in notes)
+					{
+						sudokuSquare.Value = number.ToString()[0];
+						sudokuSquare.HasTestValue = true;
+						if (HasConflicts(row, column))
+						{
+							sudokuSquare.Value = Char.MinValue;
+							sudokuSquare.HasTestValue = false;
+						}
+						else if (BruteForceAttack(row, column))
+							return true;
+					}
+				}
+
+			return AllSquaresAreFilled();
+		}
+
+		private void btnBruteForce_Click(object sender, RoutedEventArgs e)
+		{
+			SudokuSquare.Updating = true;
+			try
+			{
+				RefreshAllNotes();
+				BruteForceAttack();
+			}
+			finally
+			{
+				SudokuSquare.Updating = false;
+			}
 		}
 
 		//private void Button1_Click(object sender, RoutedEventArgs e)
