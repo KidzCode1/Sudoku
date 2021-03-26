@@ -13,7 +13,7 @@ namespace Sudoku
 		}
 
 
-		protected SolveResult SolveForMany(ISudokuSquare[] group, SolveResult result, List<int> indices)
+		protected SolveResult SolveForMany(ISudokuSquare[] group, SolveResult result, List<int> indices, GroupKind groupKind)
 		{
 			List<List<int>> allNoteNumbers = new List<List<int>>();
 			foreach (int index in indices)

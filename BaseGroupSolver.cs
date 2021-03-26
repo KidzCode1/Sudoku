@@ -6,7 +6,7 @@ namespace Sudoku
 {
 	public abstract class BaseGroupSolver
 	{
-		public abstract SolveResult Solve(ISudokuSquare[] group);   // I'm not going to implement it here.
+		public abstract SolveResult Solve(ISudokuSquare[] group, GroupKind groupKind);   // I'm not going to implement it here.
 
 		public static List<int> GetNumbers(string notes)
 		{

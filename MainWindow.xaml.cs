@@ -406,14 +406,14 @@ namespace Sudoku
 			{
 				// Calling solve 27 times for all the rows, columns, and blocks.
 				for (int c = 0; c < 9; c++)
-					if (sudokuSolver.Solve(GetColumn(c)) == SolveResult.SquaresSolved)
+					if (sudokuSolver.Solve(GetColumn(c), GroupKind.Column) == SolveResult.SquaresSolved)
 						squaresSolved = true;
 				for (int r = 0; r < 9; r++)
-					if (sudokuSolver.Solve(GetRow(r)) == SolveResult.SquaresSolved)
+					if (sudokuSolver.Solve(GetRow(r), GroupKind.Row) == SolveResult.SquaresSolved)
 						squaresSolved = true;
 				for (int r = 0; r < 3; r++)
 					for (int c = 0; c < 3; c++)
-						if (sudokuSolver.Solve(GetBlock(r * 3, c * 3)) == SolveResult.SquaresSolved)
+						if (sudokuSolver.Solve(GetBlock(r * 3, c * 3), GroupKind.Block) == SolveResult.SquaresSolved)
 							squaresSolved = true;
 			}
 

@@ -12,7 +12,7 @@ namespace Sudoku
 
 		}
 
-		public override SolveResult Solve(ISudokuSquare[] group)
+		public override SolveResult Solve(ISudokuSquare[] group, GroupKind groupKind)
 		{
 			Dictionary<string, List<int>> dictionary = new Dictionary<string, List<int>>();
 			Collect2x2Notes(group, dictionary);

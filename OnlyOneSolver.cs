@@ -28,7 +28,7 @@ namespace Sudoku
 			return false;
 		}
 
-		public override SolveResult Solve(ISudokuSquare[] group)
+		public override SolveResult Solve(ISudokuSquare[] group, GroupKind groupKind)
 		{
 			SolveResult result = SolveResult.None;
 			

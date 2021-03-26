@@ -12,7 +12,7 @@ namespace Sudoku
 
 		}
 
-		public override SolveResult Solve(ISudokuSquare[] group)
+		public override SolveResult Solve(ISudokuSquare[] group, GroupKind groupKind)
 		{
 			SolveResult result = SolveResult.None;
 
@@ -40,7 +40,7 @@ namespace Sudoku
 												indices.Add(third);
 												indices.Add(fourth);
 												indices.Add(fifth);
-												result = SolveForMany(group, result, indices);
+												result = SolveForMany(group, result, indices, groupKind);
 											}
 			return result;
 		}

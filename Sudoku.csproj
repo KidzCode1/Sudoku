@@ -56,6 +56,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BaseGroupSolver.cs" />
+    <Compile Include="GroupKind.cs" />
     <Compile Include="ISudokuSquare.cs" />
     <Compile Include="OnlyOneSolver.cs" />
     <Compile Include="Solver2x2.cs" />
