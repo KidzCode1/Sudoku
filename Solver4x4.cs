@@ -4,10 +4,10 @@ using System.Linq;
 
 namespace Sudoku
 {
-	public class Solver3x3 : SolverNxN
+	public class Solver4x4 : SolverNxN
 	{
 
-		public Solver3x3()
+		public Solver4x4()
 		{
 
 		}
@@ -25,13 +25,18 @@ namespace Sudoku
 							if (third == first || third == second)
 								continue;
 							else
-							{
-								List<int> indices = new List<int>();
-								indices.Add(first);
-								indices.Add(second);
-								indices.Add(third);
-								result = SolveForMany(group, result, indices);
-							}
+								for (int fourth = 0; fourth < group.Length; fourth++)
+									if (fourth == first || fourth == second || fourth == third)
+										continue;
+									else
+									{
+										List<int> indices = new List<int>();
+										indices.Add(first);
+										indices.Add(second);
+										indices.Add(third);
+										indices.Add(fourth);
+										result = SolveForMany(group, result, indices);
+									}
 			return result;
 		}
 	}

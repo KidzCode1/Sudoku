@@ -231,6 +231,7 @@ namespace Sudoku
       9
    2   43
 31   9 62";
+
 		string mediumGame = @"         
      3 85
   1 2    
@@ -240,6 +241,17 @@ namespace Sudoku
 5      73
   2 1    
     4   9";
+
+		// ![](6692E3EA32E9E486DC7E3F6F19C0028D.png;;9,93,564,651;0.01728,0.01728)
+		string expertGame = @" 4 8    6
+  1  6  3
+  63 98
+25 6 3
+
+ 87    4
+    9 7
+     4 1
+     2  5";
 
 		void ClearGame()
 		{
@@ -261,9 +273,11 @@ namespace Sudoku
 			}
 		}
 		bool loadingGame;
-		void LoadGame(string gameStr)
+		void LoadGame(string gameStr, string message)
 		{
+			Title = message;
 			loadingGame = true;
+			SudokuSquare.Updating = true;
 			try
 			{
 				ClearGame();
@@ -277,6 +291,7 @@ namespace Sudoku
 			}
 			finally
 			{
+				SudokuSquare.Updating = false;
 				loadingGame = false;
 			}
 		}
@@ -285,11 +300,14 @@ namespace Sudoku
 		{
 			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
 				if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
-					LoadGame(mediumGame);
+					if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
+						LoadGame(expertGame, "Expert Game Loaded");
+					else
+						LoadGame(hardGame, "Hard Game Loaded");
 				else
-					LoadGame(hardGame);
+					LoadGame(mediumGame, "Medium Game Loaded");
 			else
-				LoadGame(easyGame);
+				LoadGame(easyGame, "Easy Game Loaded");
 		}
 
 		SudokuSquare[] GetColumn(int column)
@@ -522,6 +540,8 @@ namespace Sudoku
 		{
 			solvers.Add(new Solver2x2());
 			solvers.Add(new Solver3x3());
+			solvers.Add(new Solver4x4());
+			solvers.Add(new Solver5x5());
 			solvers.Add(new OnlyOneSolver());
 		}
 

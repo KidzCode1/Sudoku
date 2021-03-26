@@ -60,6 +60,8 @@
     <Compile Include="OnlyOneSolver.cs" />
     <Compile Include="Solver2x2.cs" />
     <Compile Include="Solver3x3.cs" />
+    <Compile Include="Solver4x4.cs" />
+    <Compile Include="Solver5x5.cs" />
     <Compile Include="SolveResult.cs" />
     <Compile Include="SolverNxN.cs" />
     <Compile Include="SudokuSquare.xaml.cs">
