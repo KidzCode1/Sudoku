@@ -148,6 +148,8 @@ namespace Sudoku
 
 		public string GetText()
 		{
+			if (Value == char.MinValue)
+				return "";
 			return tbxValue.Text;
 		}
 

@@ -354,6 +354,11 @@ namespace Sudoku
 				return;
 
 			GetSquarePosition(square, out int r, out int c);
+			ShowNotesForSquareAt(square, r, c);
+		}
+
+		private void ShowNotesForSquareAt(SudokuSquare square, int r, int c)
+		{
 			SudokuSquare[] column = GetColumn(c);
 			SudokuSquare[] row = GetRow(r);
 			SudokuSquare[] block = GetBlock(r, c);
@@ -532,8 +537,14 @@ namespace Sudoku
 			return true;
 		}
 
+		int numCombinationsTried;
 		bool BruteForceAttack(int startingRow = 0, int startingColumn = 0)
 		{
+			if (startingColumn >= 9)
+			{
+				startingColumn = 0;
+				startingRow++;
+			}
 			for (int row = startingRow; row < 9; row++)
 				for (int column = startingColumn; column < 9; column++)
 				{
@@ -542,19 +553,37 @@ namespace Sudoku
 					if (!sudokuSquare.IsEmpty)
 						continue;
 					// Magic - I have an empty square!!!
+					if (sudokuSquare.Notes == "")
+					{
+						ShowNotesForSquareAt(sudokuSquare, row, column);
+						if (sudokuSquare.Notes == "")  // That means we have a conflict.
+							return BruteForceAttack(row, column + 1);
+					}
+
 					List<int> notes = BaseGroupSolver.GetNumbers(sudokuSquare.Notes);
+					
 					foreach (int number in notes)
 					{
 						sudokuSquare.Value = number.ToString()[0];
 						sudokuSquare.HasTestValue = true;
+						numCombinationsTried++;
 						if (HasConflicts(row, column))
 						{
 							sudokuSquare.Value = Char.MinValue;
 							sudokuSquare.HasTestValue = false;
 						}
-						else if (BruteForceAttack(row, column))
+						else if (BruteForceAttack(row, column + 1))
+						{
+							sudokuSquare.Notes = "";
 							return true;
+						}
+						else
+						{
+							sudokuSquare.Value = Char.MinValue;
+							sudokuSquare.HasTestValue = false;
+						}
 					}
+					return false;
 				}
 
 			return AllSquaresAreFilled();
@@ -565,7 +594,8 @@ namespace Sudoku
 			SudokuSquare.Updating = true;
 			try
 			{
-				RefreshAllNotes();
+				numCombinationsTried = 0;
+				//RefreshAllNotes();
 				BruteForceAttack();
 			}
 			finally
