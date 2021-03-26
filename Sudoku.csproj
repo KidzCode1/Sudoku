@@ -61,6 +61,7 @@
     <Compile Include="Solver2x2.cs" />
     <Compile Include="Solver3x3.cs" />
     <Compile Include="SolveResult.cs" />
+    <Compile Include="SolverNxN.cs" />
     <Compile Include="SudokuSquare.xaml.cs">
       <DependentUpon>SudokuSquare.xaml</DependentUpon>
     </Compile>
