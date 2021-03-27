@@ -57,6 +57,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BaseGroupSolver.cs" />
+    <Compile Include="Command.cs" />
+    <Compile Include="CommandInvoker.cs" />
     <Compile Include="GroupKind.cs" />
     <Compile Include="ISudokuSquare.cs" />
     <Compile Include="OnlyOneSolver.cs" />
@@ -66,9 +68,11 @@
     <Compile Include="Solver5x5.cs" />
     <Compile Include="SolveResult.cs" />
     <Compile Include="SolverNxN.cs" />
+    <Compile Include="SudokuBoard.cs" />
     <Compile Include="SudokuSquare.xaml.cs">
       <DependentUpon>SudokuSquare.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TextChangedCommand.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

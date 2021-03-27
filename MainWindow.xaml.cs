@@ -22,25 +22,8 @@ namespace Sudoku
 	public partial class MainWindow : Window
 	{
 		List<BaseGroupSolver> solvers = new List<BaseGroupSolver>();
-		SudokuSquare[,] squares = new SudokuSquare[9, 9];
-		SudokuSquare selectedSquare;
 		public static string availableChars;
-		public SudokuSquare SelectedSquare
-		{
-			get => selectedSquare;
-			set
-			{
-				if (selectedSquare == value)
-					return;
-
-				SudokuSquare oldSelectedSquare = selectedSquare;
-				if (oldSelectedSquare != null)
-					oldSelectedSquare.HideSelection();
-
-				selectedSquare = value;
-				selectedSquare.ShowSelection();
-			}
-		}
+		
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -48,120 +31,124 @@ namespace Sudoku
 			InitializeSolvers();
 			HookEvents();
 
-			SelectedSquare = squares[0, 0];
+			SudokuBoard.SelectFirstSquare();
 		}
 
 		private void InitializeSquares()
 		{
-			squares[0, 0] = tbx0_0;
-			squares[0, 1] = tbx0_1;
-			squares[0, 2] = tbx0_2;
-			squares[0, 3] = tbx0_3;
-			squares[0, 4] = tbx0_4;
-			squares[0, 5] = tbx0_5;
-			squares[0, 6] = tbx0_6;
-			squares[0, 7] = tbx0_7;
-			squares[0, 8] = tbx0_8;
-
-			squares[1, 0] = tbx1_0;
-			squares[1, 1] = tbx1_1;
-			squares[1, 2] = tbx1_2;
-			squares[1, 3] = tbx1_3;
-			squares[1, 4] = tbx1_4;
-			squares[1, 5] = tbx1_5;
-			squares[1, 6] = tbx1_6;
-			squares[1, 7] = tbx1_7;
-			squares[1, 8] = tbx1_8;
-
-			squares[2, 0] = tbx2_0;
-			squares[2, 1] = tbx2_1;
-			squares[2, 2] = tbx2_2;
-			squares[2, 3] = tbx2_3;
-			squares[2, 4] = tbx2_4;
-			squares[2, 5] = tbx2_5;
-			squares[2, 6] = tbx2_6;
-			squares[2, 7] = tbx2_7;
-			squares[2, 8] = tbx2_8;
-			squares[3, 0] = tbx3_0;
-			squares[3, 1] = tbx3_1;
-			squares[3, 2] = tbx3_2;
-			squares[3, 3] = tbx3_3;
-			squares[3, 4] = tbx3_4;
-			squares[3, 5] = tbx3_5;
-			squares[3, 6] = tbx3_6;
-			squares[3, 7] = tbx3_7;
-			squares[3, 8] = tbx3_8;
-			squares[4, 0] = tbx4_0;
-			squares[4, 1] = tbx4_1;
-			squares[4, 2] = tbx4_2;
-			squares[4, 3] = tbx4_3;
-			squares[4, 4] = tbx4_4;
-			squares[4, 5] = tbx4_5;
-			squares[4, 6] = tbx4_6;
-			squares[4, 7] = tbx4_7;
-			squares[4, 8] = tbx4_8;
-			squares[5, 0] = tbx5_0;
-			squares[5, 1] = tbx5_1;
-			squares[5, 2] = tbx5_2;
-			squares[5, 3] = tbx5_3;
-			squares[5, 4] = tbx5_4;
-			squares[5, 5] = tbx5_5;
-			squares[5, 6] = tbx5_6;
-			squares[5, 7] = tbx5_7;
-			squares[5, 8] = tbx5_8;
-			squares[6, 0] = tbx6_0;
-			squares[6, 1] = tbx6_1;
-			squares[6, 2] = tbx6_2;
-			squares[6, 3] = tbx6_3;
-			squares[6, 4] = tbx6_4;
-			squares[6, 5] = tbx6_5;
-			squares[6, 6] = tbx6_6;
-			squares[6, 7] = tbx6_7;
-			squares[6, 8] = tbx6_8;
-			squares[7, 0] = tbx7_0;
-			squares[7, 1] = tbx7_1;
-			squares[7, 2] = tbx7_2;
-			squares[7, 3] = tbx7_3;
-			squares[7, 4] = tbx7_4;
-			squares[7, 5] = tbx7_5;
-			squares[7, 6] = tbx7_6;
-			squares[7, 7] = tbx7_7;
-			squares[7, 8] = tbx7_8;
-			squares[8, 0] = tbx8_0;
-			squares[8, 1] = tbx8_1;
-			squares[8, 2] = tbx8_2;
-			squares[8, 3] = tbx8_3;
-			squares[8, 4] = tbx8_4;
-			squares[8, 5] = tbx8_5;
-			squares[8, 6] = tbx8_6;
-			squares[8, 7] = tbx8_7;
-			squares[8, 8] = tbx8_8;
+			SudokuBoard.AddSquare(0, 0, tbx0_0);
+			SudokuBoard.AddSquare(0, 1, tbx0_1);
+			SudokuBoard.AddSquare(0, 2, tbx0_2);
+			SudokuBoard.AddSquare(0, 3, tbx0_3);
+			SudokuBoard.AddSquare(0, 4, tbx0_4);
+			SudokuBoard.AddSquare(0, 5, tbx0_5);
+			SudokuBoard.AddSquare(0, 6, tbx0_6);
+			SudokuBoard.AddSquare(0, 7, tbx0_7);
+			SudokuBoard.AddSquare(0, 8, tbx0_8);
+			SudokuBoard.AddSquare(1, 0, tbx1_0);
+			SudokuBoard.AddSquare(1, 1, tbx1_1);
+			SudokuBoard.AddSquare(1, 2, tbx1_2);
+			SudokuBoard.AddSquare(1, 3, tbx1_3);
+			SudokuBoard.AddSquare(1, 4, tbx1_4);
+			SudokuBoard.AddSquare(1, 5, tbx1_5);
+			SudokuBoard.AddSquare(1, 6, tbx1_6);
+			SudokuBoard.AddSquare(1, 7, tbx1_7);
+			SudokuBoard.AddSquare(1, 8, tbx1_8);
+			SudokuBoard.AddSquare(2, 0, tbx2_0);
+			SudokuBoard.AddSquare(2, 1, tbx2_1);
+			SudokuBoard.AddSquare(2, 2, tbx2_2);
+			SudokuBoard.AddSquare(2, 3, tbx2_3);
+			SudokuBoard.AddSquare(2, 4, tbx2_4);
+			SudokuBoard.AddSquare(2, 5, tbx2_5);
+			SudokuBoard.AddSquare(2, 6, tbx2_6);
+			SudokuBoard.AddSquare(2, 7, tbx2_7);
+			SudokuBoard.AddSquare(2, 8, tbx2_8);
+			SudokuBoard.AddSquare(3, 0, tbx3_0);
+			SudokuBoard.AddSquare(3, 1, tbx3_1);
+			SudokuBoard.AddSquare(3, 2, tbx3_2);
+			SudokuBoard.AddSquare(3, 3, tbx3_3);
+			SudokuBoard.AddSquare(3, 4, tbx3_4);
+			SudokuBoard.AddSquare(3, 5, tbx3_5);
+			SudokuBoard.AddSquare(3, 6, tbx3_6);
+			SudokuBoard.AddSquare(3, 7, tbx3_7);
+			SudokuBoard.AddSquare(3, 8, tbx3_8);
+			SudokuBoard.AddSquare(4, 0, tbx4_0);
+			SudokuBoard.AddSquare(4, 1, tbx4_1);
+			SudokuBoard.AddSquare(4, 2, tbx4_2);
+			SudokuBoard.AddSquare(4, 3, tbx4_3);
+			SudokuBoard.AddSquare(4, 4, tbx4_4);
+			SudokuBoard.AddSquare(4, 5, tbx4_5);
+			SudokuBoard.AddSquare(4, 6, tbx4_6);
+			SudokuBoard.AddSquare(4, 7, tbx4_7);
+			SudokuBoard.AddSquare(4, 8, tbx4_8);
+			SudokuBoard.AddSquare(5, 0, tbx5_0);
+			SudokuBoard.AddSquare(5, 1, tbx5_1);
+			SudokuBoard.AddSquare(5, 2, tbx5_2);
+			SudokuBoard.AddSquare(5, 3, tbx5_3);
+			SudokuBoard.AddSquare(5, 4, tbx5_4);
+			SudokuBoard.AddSquare(5, 5, tbx5_5);
+			SudokuBoard.AddSquare(5, 6, tbx5_6);
+			SudokuBoard.AddSquare(5, 7, tbx5_7);
+			SudokuBoard.AddSquare(5, 8, tbx5_8);
+			SudokuBoard.AddSquare(6, 0, tbx6_0);
+			SudokuBoard.AddSquare(6, 1, tbx6_1);
+			SudokuBoard.AddSquare(6, 2, tbx6_2);
+			SudokuBoard.AddSquare(6, 3, tbx6_3);
+			SudokuBoard.AddSquare(6, 4, tbx6_4);
+			SudokuBoard.AddSquare(6, 5, tbx6_5);
+			SudokuBoard.AddSquare(6, 6, tbx6_6);
+			SudokuBoard.AddSquare(6, 7, tbx6_7);
+			SudokuBoard.AddSquare(6, 8, tbx6_8);
+			SudokuBoard.AddSquare(7, 0, tbx7_0);
+			SudokuBoard.AddSquare(7, 1, tbx7_1);
+			SudokuBoard.AddSquare(7, 2, tbx7_2);
+			SudokuBoard.AddSquare(7, 3, tbx7_3);
+			SudokuBoard.AddSquare(7, 4, tbx7_4);
+			SudokuBoard.AddSquare(7, 5, tbx7_5);
+			SudokuBoard.AddSquare(7, 6, tbx7_6);
+			SudokuBoard.AddSquare(7, 7, tbx7_7);
+			SudokuBoard.AddSquare(7, 8, tbx7_8);
+			SudokuBoard.AddSquare(8, 0, tbx8_0);
+			SudokuBoard.AddSquare(8, 1, tbx8_1);
+			SudokuBoard.AddSquare(8, 2, tbx8_2);
+			SudokuBoard.AddSquare(8, 3, tbx8_3);
+			SudokuBoard.AddSquare(8, 4, tbx8_4);
+			SudokuBoard.AddSquare(8, 5, tbx8_5);
+			SudokuBoard.AddSquare(8, 6, tbx8_6);
+			SudokuBoard.AddSquare(8, 7, tbx8_7);
+			SudokuBoard.AddSquare(8, 8, tbx8_8);
 		}
 
 		private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.Key == Key.Right)
 			{
-				GetSquarePosition(SelectedSquare, out int row, out int column);
+				GetSquarePosition(SudokuBoard.SelectedSquare, out int row, out int column);
 				SelectSquare(row, column + 1);
 			}
 
 			if (e.Key == Key.Left)
 			{
-				GetSquarePosition(SelectedSquare, out int row, out int column);
+				GetSquarePosition(SudokuBoard.SelectedSquare, out int row, out int column);
 				SelectSquare(row, column - 1);
 			}
 
 			if (e.Key == Key.Down)
 			{
-				GetSquarePosition(SelectedSquare, out int row, out int column);
+				GetSquarePosition(SudokuBoard.SelectedSquare, out int row, out int column);
 				SelectSquare(row + 1, column);
 			}
 
 			if (e.Key == Key.Up)
 			{
-				GetSquarePosition(SelectedSquare, out int row, out int column);
+				GetSquarePosition(SudokuBoard.SelectedSquare, out int row, out int column);
 				SelectSquare(row - 1, column);
+			}
+
+			if (e.Key == Key.Z && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+			{
+				CommandInvoker.Undo();
+				e.Handled = true;
 			}
 		}
 
@@ -179,14 +166,14 @@ namespace Sudoku
 			if (row < 0)
 				row += 9;
 
-			SelectedSquare = squares[row, column];
+			SudokuBoard.SelectedSquare = SudokuBoard.squares[row, column];
 		}
 
 		void GetSquarePosition(SudokuSquare square, out int row, out int column)
 		{
 			for (int c = 0; c < 9; c++)
 				for (int r = 0; r < 9; r++)
-					if (squares[r, c] == square)
+					if (SudokuBoard.squares[r, c] == square)
 					{
 						row = r;
 						column = c;
@@ -258,18 +245,18 @@ namespace Sudoku
 		{
 			for (int c = 0; c < 9; c++)
 				for (int r = 0; r < 9; r++)
-					squares[r, c].Clear();
+					SudokuBoard.squares[r, c].Clear();
 		}
 
-		void AddValuesForLine(int row, string line)
+		void LoadValuesForLine(int row, string line)
 		{
 			for (int column = 0; column < line.Length; column++)
 			{
 				char chr = line[column];
 				if (chr != ' ')
 				{
-					squares[row, column].SetText(chr.ToString());
-					squares[row, column].Locked = true;
+					SudokuBoard.squares[row, column].SetText(chr.ToString());
+					SudokuBoard.squares[row, column].Locked = true;
 				}
 			}
 		}
@@ -288,7 +275,7 @@ namespace Sudoku
 				int row = 0;
 				foreach (string line in lines)
 				{
-					AddValuesForLine(row, line.TrimEnd());
+					LoadValuesForLine(row, line.TrimEnd());
 					row++;
 				}
 			}
@@ -317,7 +304,7 @@ namespace Sudoku
 		{
 			SudokuSquare[] result = new SudokuSquare[9];
 			for (int row = 0; row < 9; row++)
-				result[row] = squares[row, column];
+				result[row] = SudokuBoard.squares[row, column];
 
 			return result;
 		}
@@ -326,7 +313,7 @@ namespace Sudoku
 		{
 			SudokuSquare[] result = new SudokuSquare[9];
 			for (int column = 0; column < 9; column++)
-				result[column] = squares[row, column];
+				result[column] = SudokuBoard.squares[row, column];
 
 			return result;
 		}
@@ -340,7 +327,7 @@ namespace Sudoku
 			for (int r = topRow; r < topRow + 3; r++)
 				for (int c = leftColumn; c < leftColumn + 3; c++)
 				{
-					result[index] = squares[r, c];
+					result[index] = SudokuBoard.squares[r, c];
 					index++;
 				}
 
@@ -366,7 +353,7 @@ namespace Sudoku
 		{
 			for (int c = 0; c < 9; c++)
 				for (int r = 0; r < 9; r++)
-					squares[r, c].FillFromNotesIfPossible();
+					SudokuBoard.squares[r, c].FillFromNotesIfPossible();
 		}
 
 		private void ShowNotesForSquare(SudokuSquare square)
@@ -428,26 +415,26 @@ namespace Sudoku
 		{
 			for (int c = 0; c < 9; c++)
 				for (int r = 0; r < 9; r++)
-					ShowNotesForSquare(squares[r, c]);
+					ShowNotesForSquare(SudokuBoard.squares[r, c]);
 		}
 
 		private void btnClearNotes_Click(object sender, RoutedEventArgs e)
 		{
 			for (int c = 0; c < 9; c++)
 				for (int r = 0; r < 9; r++)
-					squares[r, c].ClearNotes();
+					SudokuBoard.squares[r, c].ClearNotes();
 		}
 
 		private void btnConflictToggle_Click(object sender, RoutedEventArgs e)
 		{
-			SelectedSquare.HasConflict = !SelectedSquare.HasConflict;
+			SudokuBoard.SelectedSquare.ToggleConflicts();
 		}
 
 		void HookEvents()
 		{
 			for (int row = 0; row < 9; row++)
 				for (int column = 0; column < 9; column++)
-					squares[row, column].ValueChanged += SudokuSquare_ValueChanged;
+					SudokuBoard.squares[row, column].ValueChanged += SudokuSquare_ValueChanged;
 
 		}
 
@@ -458,7 +445,7 @@ namespace Sudoku
 
 		bool CheckForConflicts(int r, int c, bool setHasConflictedProperty = true)
 		{
-			SudokuSquare thisSquare = squares[r, c];
+			SudokuSquare thisSquare = SudokuBoard.squares[r, c];
 			string text = thisSquare.GetText();
 			if (string.IsNullOrWhiteSpace(text))
 				return false;
@@ -525,7 +512,7 @@ namespace Sudoku
 		{
 			for (int r = 0; r < 9; r++)
 				for (int c = 0; c < 9; c++)
-					squares[r, c].HasConflict = false;
+					SudokuBoard.squares[r, c].HasConflict = false;
 		}
 
 		private void SudokuSquare_ValueChanged(object sender, EventArgs e)
@@ -554,7 +541,7 @@ namespace Sudoku
 			for (int row = 0; row < 9; row++)
 				for (int column = 0; column < 9; column++)
 				{
-					SudokuSquare sudokuSquare = squares[row, column];
+					SudokuSquare sudokuSquare = SudokuBoard.squares[row, column];
 					if (sudokuSquare.IsEmpty)
 						return false;
 				}
@@ -573,7 +560,7 @@ namespace Sudoku
 				for (int column = startingColumn; column < 9; column++)
 				{
 					startingColumn = 0;
-					SudokuSquare sudokuSquare = squares[row, column];
+					SudokuSquare sudokuSquare = SudokuBoard.squares[row, column];
 					if (!sudokuSquare.IsEmpty)
 						continue;
 					// Magic - I have an empty square!!!
@@ -639,17 +626,17 @@ namespace Sudoku
 			for (int row = 0; row < 9; row++)
 				for (int column = 0; column < 9; column++)
 				{
-					if (squares[row, column].HasTestValue)
+					if (SudokuBoard.squares[row, column].HasTestValue)
 					{
 						if (!foundOneYet)
 						{
 							foundOneYet = true;
-							squares[row, column].Background = new SolidColorBrush(Color.FromRgb(163, 247, 176));
+							SudokuBoard.squares[row, column].Background = new SolidColorBrush(Color.FromRgb(163, 247, 176));
 						}
 						else
-							squares[row, column].Value = char.MinValue;
+							SudokuBoard.squares[row, column].Value = char.MinValue;
 
-						squares[row, column].HasTestValue = false;
+						SudokuBoard.squares[row, column].HasTestValue = false;
 					}
 				}
 		}
@@ -660,7 +647,7 @@ namespace Sudoku
 			for (int row = 0; row < 9; row++)
 				for (int column = 0; column < 9; column++)
 				{
-					List<int> numbers = BaseGroupSolver.GetNumbers(squares[row, column].Notes);
+					List<int> numbers = BaseGroupSolver.GetNumbers(SudokuBoard.squares[row, column].Notes);
 					if (numbers.Count > 0)
 					{
 						numCombos *= numbers.Count;

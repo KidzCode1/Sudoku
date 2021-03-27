@@ -42,7 +42,8 @@ namespace Sudoku
 				}
 			}
 		}
-		
+
+		int column;
 		bool hasConflict;
 
 		bool locked;
@@ -71,8 +72,8 @@ namespace Sudoku
 			}
 		}
 
-		public string Notes 
-		{ 
+		public string Notes
+		{
 			get
 			{
 				return tbNotes.Text;
@@ -92,8 +93,18 @@ namespace Sudoku
 		{
 			ValueChanged?.Invoke(sender, e);
 		}
+
+		public int Column => Grid.GetColumn(this);
+		public int Row => Grid.GetRow(this);
+		public static int NumTextChangesToSkip = 0;
 		private void tbxValue_TextChanged(object sender, TextChangedEventArgs e)
 		{
+			if (ignoreNextTextChangedEvent)
+			{
+				ignoreNextTextChangedEvent = false;
+				return;
+			}
+
 			if (Updating)
 				return;
 			if (e.Changes != null)
@@ -105,14 +116,14 @@ namespace Sudoku
 					string whatChanged = lineText.Substring(textChange.Offset, textChange.AddedLength);
 					if (MainWindow.availableChars.Contains(whatChanged))
 					{
-						if (textBox.Text != whatChanged)
-							textBox.Text = whatChanged;
+						CommandInvoker.DoCommand(new TextChangedCommand(lastValue, whatChanged, Row, Column));
+						//textBox.Text = whatChanged;
 					}
-					else if (textBox.Text != " ")
+					else
 					{
-						textBox.Text = " ";
+						CommandInvoker.DoCommand(new TextChangedCommand(lastValue, whatChanged, Row, Column));
+						//textBox.Text = " ";
 					}
-					OnValueChanged(this, EventArgs.Empty);
 				}
 			}
 		}
@@ -146,6 +157,21 @@ namespace Sudoku
 		public void SetText(string text)
 		{
 			tbxValue.Text = text;
+			OnValueChanged(this, EventArgs.Empty);
+			SaveLastValue();
+		}
+
+		bool ignoreNextTextChangedEvent;
+		
+		public void SetTextNoInternalEvents(string text)
+		{
+			if (tbxValue.Text != text)
+			{
+				ignoreNextTextChangedEvent = true;
+				tbxValue.Text = text;
+			}
+			OnValueChanged(this, EventArgs.Empty);
+			SaveLastValue();
 		}
 
 		public string GetText()
@@ -189,6 +215,22 @@ namespace Sudoku
 		public void ClearNotes()
 		{
 			tbNotes.Text = "";
+		}
+		public void ToggleConflicts()
+		{
+			HasConflict = !HasConflict;
+		}
+
+		string lastValue;
+
+		private void tbxValue_GotFocus(object sender, RoutedEventArgs e)
+		{
+			SaveLastValue();
+		}
+
+		private void SaveLastValue()
+		{
+			lastValue = tbxValue.Text;
 		}
 	}
 }
