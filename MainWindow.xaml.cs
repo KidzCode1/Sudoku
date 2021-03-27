@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -278,6 +279,8 @@ namespace Sudoku
 			Title = message;
 			loadingGame = true;
 			SudokuSquare.Updating = true;
+			btnBruteForce.IsEnabled = false;
+			btnHint.IsEnabled = false;
 			try
 			{
 				ClearGame();
@@ -397,6 +400,7 @@ namespace Sudoku
 			FillFromAllNotes();
 			RefreshAllNotes();
 			ApplySolvers();
+			UpdateCombinationsRemaining();
 		}
 
 		private bool ApplySolvers()
@@ -611,11 +615,15 @@ namespace Sudoku
 
 		private void btnBruteForce_Click(object sender, RoutedEventArgs e)
 		{
+			StartBruteForceAttack();
+		}
+
+		private void StartBruteForceAttack()
+		{
 			SudokuSquare.Updating = true;
 			try
 			{
 				numCombinationsTried = 0;
-				//RefreshAllNotes();
 				BruteForceAttack();
 			}
 			finally
@@ -624,6 +632,49 @@ namespace Sudoku
 			}
 		}
 
+		private void btnHint_Click(object sender, RoutedEventArgs e)
+		{
+			StartBruteForceAttack();
+			bool foundOneYet = false;
+			for (int row = 0; row < 9; row++)
+				for (int column = 0; column < 9; column++)
+				{
+					if (squares[row, column].HasTestValue)
+					{
+						if (!foundOneYet)
+						{
+							foundOneYet = true;
+							squares[row, column].Background = new SolidColorBrush(Color.FromRgb(163, 247, 176));
+						}
+						else
+							squares[row, column].Value = char.MinValue;
+
+						squares[row, column].HasTestValue = false;
+					}
+				}
+		}
+
+		void UpdateCombinationsRemaining()
+		{
+			BigInteger numCombos = 1;
+			for (int row = 0; row < 9; row++)
+				for (int column = 0; column < 9; column++)
+				{
+					List<int> numbers = BaseGroupSolver.GetNumbers(squares[row, column].Notes);
+					if (numbers.Count > 0)
+					{
+						numCombos *= numbers.Count;
+					}
+				}
+			if (numCombos == 1)
+				numCombos = 0;
+			if (numCombos < 200000000)
+			{
+				btnBruteForce.IsEnabled = true;
+				btnHint.IsEnabled = true;
+			}
+			Title = $"The number of combinations is {numCombos}!";
+		}
 		//private void Button1_Click(object sender, RoutedEventArgs e)
 		//{
 		//	if (SelectedSquare != null)

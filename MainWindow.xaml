@@ -140,6 +140,9 @@
                 <Button x:Name="btnBruteForce" Padding="20,4,20,4" Margin="4" Click="btnBruteForce_Click">
                 	Brute Force
                 </Button>
+                <Button x:Name="btnHint" Padding="20,4,20,4" Margin="4" Click="btnHint_Click">
+                	Hint
+                </Button>
                 <Button x:Name="btnClearNotes" Padding="20,4,20,4" Click="btnClearNotes_Click" Margin="4">
                     Clear Notes!
                 </Button>

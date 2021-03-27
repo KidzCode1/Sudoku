@@ -25,7 +25,6 @@ namespace Sudoku
 					return SolveResult.None;
 			}
 
-			// Super magic!!!
 			// We have N squares that all contain N notes or fewer!!!
 			List<int> allNumbersFound = new List<int>();
 			foreach (List<int> noteNumbers in allNoteNumbers)
@@ -38,7 +37,8 @@ namespace Sudoku
 				{
 					if (indices.Contains(i))
 						continue;
-					// Now we can actually remove!!!
+
+					// We can actually remove!!!
 					if (RemoveNotesFrom(group[i], string.Join(", ", allNumbersFound)) == SolveResult.SquaresSolved)
 						result = SolveResult.SquaresSolved;
 				}

@@ -137,8 +137,10 @@ namespace Sudoku
 		{
 			tbxValue.Text = "";
 			tbNotes.Text = "";
+			Background = null;
 			Locked = false;
 			HasConflict = false;
+			HasTestValue = false;
 		}
 
 		public void SetText(string text)
