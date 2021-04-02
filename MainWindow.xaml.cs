@@ -150,6 +150,15 @@ namespace Sudoku
 				CommandInvoker.Undo();
 				e.Handled = true;
 			}
+
+			bool ctrlShiftZPressed = e.Key == Key.Z && Keyboard.Modifiers.HasFlag(ModifierKeys.Control) && Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
+			bool ctrlYPressed = e.Key == Key.Y && Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+			
+			if (ctrlShiftZPressed || ctrlYPressed)
+			{
+				CommandInvoker.Redo();
+				e.Handled = true;
+			}
 		}
 
 		void SelectSquare(int row, int column)

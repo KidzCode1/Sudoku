@@ -22,5 +22,10 @@ namespace Sudoku
 			Command command = undoStack.Pop();
 			command.Undo();
 		}
+
+		public static void Redo()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
