@@ -26,6 +26,26 @@ namespace Sudoku
 			}
 
 			// We have N squares that all contain N notes or fewer!!!
+
+			// We want to add the new logic!
+			if (groupKind == GroupKind.Column || groupKind == GroupKind.Row)
+			{
+				// TODO: Group by block
+
+				foreach (List<int> noteNumbers in allNoteNumbers)
+				{
+					
+				}
+
+				// TODO: Do we have more than one block?
+				// Yes? It's magic!!!
+				// TODO: Set Subtraction (e.g., b1 - b2) - b1 is the first block we subtract from
+				// TODO: Set Subtraction the other (b2 - b1) - so b2 is the first block we subtract from
+				// TODO: Anything left over???
+				// Yes? Then we can remove those leftover numbers from **all the other squares** in the first block we subtracted from.
+				// LaterCommands.Add(new RemoveCommand(b2, "1, 3"));
+			}
+
 			List<int> allNumbersFound = new List<int>();
 			foreach (List<int> noteNumbers in allNoteNumbers)
 				AddNumbersTo(allNumbersFound, noteNumbers);
