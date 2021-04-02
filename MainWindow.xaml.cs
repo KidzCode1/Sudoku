@@ -21,6 +21,7 @@ namespace Sudoku
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		bool alwaysEnableSolveButtons = true;
 		List<BaseGroupSolver> solvers = new List<BaseGroupSolver>();
 		public static string availableChars;
 		
@@ -655,11 +656,10 @@ namespace Sudoku
 				}
 			if (numCombos == 1)
 				numCombos = 0;
-			if (numCombos < 200000000)
-			{
-				btnBruteForce.IsEnabled = true;
-				btnHint.IsEnabled = true;
-			}
+			bool weHaveAReasonableNumberOfCombosWeCanSolve = numCombos < 200_000_000;
+			bool shouldEnableSolveButtons = alwaysEnableSolveButtons || weHaveAReasonableNumberOfCombosWeCanSolve;
+			btnBruteForce.IsEnabled = shouldEnableSolveButtons;
+			btnHint.IsEnabled = shouldEnableSolveButtons;
 			Title = $"The number of combinations is {numCombos}!";
 		}
 		//private void Button1_Click(object sender, RoutedEventArgs e)
