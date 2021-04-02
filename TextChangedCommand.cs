@@ -22,11 +22,13 @@
 		public override void Execute()
 		{
 			SudokuBoard.ChangeText(Row, Column, WhatChanged);
+			SudokuBoard.SelectSquare(Row, Column);
 		}
 
 		public override void Undo()
 		{
 			SudokuBoard.ChangeText(Row, Column, PreviousValue);
+			SudokuBoard.SelectSquare(Row, Column);
 		}
 	}
 }

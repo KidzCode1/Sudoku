@@ -22,6 +22,7 @@ namespace Sudoku
 	{
 		public static bool Updating { get; set; }
 		public event EventHandler ValueChanged;
+		public event EventHandler SquareReceivedFocus;
 		public bool HasConflict
 		{
 			get => hasConflict;
@@ -92,6 +93,11 @@ namespace Sudoku
 		protected virtual void OnValueChanged(object sender, EventArgs e)
 		{
 			ValueChanged?.Invoke(sender, e);
+		}
+
+		protected virtual void OnSquareReceivedFocus(object sender, EventArgs e)
+		{
+			SquareReceivedFocus?.Invoke(sender, e);
 		}
 
 		public int Column => Grid.GetColumn(this);
@@ -226,6 +232,7 @@ namespace Sudoku
 		private void tbxValue_GotFocus(object sender, RoutedEventArgs e)
 		{
 			SaveLastValue();
+			OnSquareReceivedFocus(this, EventArgs.Empty);
 		}
 
 		private void SaveLastValue()

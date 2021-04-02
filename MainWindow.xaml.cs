@@ -146,13 +146,13 @@ namespace Sudoku
 				SelectSquare(row - 1, column);
 			}
 
-			if (e.Key == Key.Z && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+			if (e.Key == Key.Z && Keyboard.Modifiers.HasFlag(ModifierKeys.Control) && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
 			{
 				CommandInvoker.Undo();
 				e.Handled = true;
 			}
 
-			bool ctrlShiftZPressed = e.Key == Key.Z && Keyboard.Modifiers.HasFlag(ModifierKeys.Control) && Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
+			bool ctrlShiftZPressed = e.Key == Key.Z && Keyboard.Modifiers.HasFlag(ModifierKeys.Control | ModifierKeys.Shift);
 			bool ctrlYPressed = e.Key == Key.Y && Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
 			
 			if (ctrlShiftZPressed || ctrlYPressed)
@@ -164,19 +164,7 @@ namespace Sudoku
 
 		void SelectSquare(int row, int column)
 		{
-			if (column >= 9)
-				column -= 9;
-
-			if (column < 0)
-				column += 9;
-
-			if (row >= 9)
-				row -= 9;
-
-			if (row < 0)
-				row += 9;
-
-			SudokuBoard.SelectedSquare = SudokuBoard.squares[row, column];
+			SudokuBoard.SelectSquare(row, column);
 		}
 
 		void GetSquarePosition(SudokuSquare square, out int row, out int column)
@@ -444,8 +432,16 @@ namespace Sudoku
 		{
 			for (int row = 0; row < 9; row++)
 				for (int column = 0; column < 9; column++)
+				{
 					SudokuBoard.squares[row, column].ValueChanged += SudokuSquare_ValueChanged;
+					SudokuBoard.squares[row, column].SquareReceivedFocus += MainWindow_SquareReceivedFocus;
+				}
+		}
 
+		private void MainWindow_SquareReceivedFocus(object sender, EventArgs e)
+		{
+			if (sender is SudokuSquare sudokuSquare)
+				SudokuBoard.SelectedSquare = sudokuSquare;
 		}
 
 		bool HasConflicts(int r, int c)

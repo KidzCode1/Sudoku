@@ -26,6 +26,23 @@ namespace Sudoku
 			}
 		}
 
+		public static void SelectSquare(int row, int column)
+		{
+			if (column >= 9)
+				column -= 9;
+
+			if (column < 0)
+				column += 9;
+
+			if (row >= 9)
+				row -= 9;
+
+			if (row < 0)
+				row += 9;
+
+			SelectedSquare = squares[row, column];
+		}
+
 		public static void SelectFirstSquare()
 		{
 			SelectedSquare = squares[0, 0];
