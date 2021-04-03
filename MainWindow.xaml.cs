@@ -292,40 +292,6 @@ namespace Sudoku
 				LoadGame(easyGame, "Easy Game Loaded");
 		}
 
-		ISudokuSquare[] GetColumn(int column)
-		{
-			ISudokuSquare[] result = new ISudokuSquare[9];
-			for (int row = 0; row < 9; row++)
-				result[row] = SudokuBoard.squares[row, column];
-
-			return result;
-		}
-
-		ISudokuSquare[] GetRow(int row)
-		{
-			ISudokuSquare[] result = new XamlSudokuSquare[9];
-			for (int column = 0; column < 9; column++)
-				result[column] = SudokuBoard.squares[row, column];
-
-			return result;
-		}
-
-		ISudokuSquare[] GetBlock(int row, int column)
-		{
-			int topRow = 3 * (int)Math.Floor((double)row / 3);
-			int leftColumn = 3 * (int)Math.Floor((double)column / 3);
-			ISudokuSquare[] result = new XamlSudokuSquare[9];
-			int index = 0;
-			for (int r = topRow; r < topRow + 3; r++)
-				for (int c = leftColumn; c < leftColumn + 3; c++)
-				{
-					result[index] = SudokuBoard.squares[r, c];
-					index++;
-				}
-
-			return result;
-		}
-
 		void RemoveCharactersFromGroup(List<char> availableChars, ISudokuSquare[] group)
 		{
 			for (int i = 0; i < 9; i++)
@@ -358,9 +324,9 @@ namespace Sudoku
 
 		private void ShowNotesForSquareAt(ISudokuSquare square)
 		{
-			ISudokuSquare[] column = GetColumn(square.Column);
-			ISudokuSquare[] row = GetRow(square.Row);
-			ISudokuSquare[] block = GetBlock(square.Row, square.Column);
+			ISudokuSquare[] column = SudokuBoard.GetColumn(square.Column);
+			ISudokuSquare[] row = SudokuBoard.GetRow(square.Row);
+			ISudokuSquare[] block = SudokuBoard.GetBlock(square.Row, square.Column);
 
 			List<char> availableChars = new List<char>();
 			foreach (char item in tbxAvailableCharacter.Text)
@@ -388,14 +354,14 @@ namespace Sudoku
 			{
 				// Calling solve 27 times for all the rows, columns, and blocks.
 				for (int c = 0; c < 9; c++)
-					if (sudokuSolver.Solve(GetColumn(c), GroupKind.Column) == SolveResult.SquaresSolved)
+					if (sudokuSolver.Solve(SudokuBoard.GetColumn(c), GroupKind.Column) == SolveResult.SquaresSolved)
 						squaresSolved = true;
 				for (int r = 0; r < 9; r++)
-					if (sudokuSolver.Solve(GetRow(r), GroupKind.Row) == SolveResult.SquaresSolved)
+					if (sudokuSolver.Solve(SudokuBoard.GetRow(r), GroupKind.Row) == SolveResult.SquaresSolved)
 						squaresSolved = true;
 				for (int r = 0; r < 3; r++)
 					for (int c = 0; c < 3; c++)
-						if (sudokuSolver.Solve(GetBlock(r * 3, c * 3), GroupKind.Block) == SolveResult.SquaresSolved)
+						if (sudokuSolver.Solve(SudokuBoard.GetBlock(r * 3, c * 3), GroupKind.Block) == SolveResult.SquaresSolved)
 							squaresSolved = true;
 			}
 
@@ -452,9 +418,9 @@ namespace Sudoku
 			if (string.IsNullOrWhiteSpace(text))
 				return false;
 
-			ISudokuSquare[] column = GetColumn(c);
-			ISudokuSquare[] row = GetRow(r);
-			ISudokuSquare[] block = GetBlock(r, c);
+			ISudokuSquare[] column = SudokuBoard.GetColumn(c);
+			ISudokuSquare[] row = SudokuBoard.GetRow(r);
+			ISudokuSquare[] block = SudokuBoard.GetBlock(r, c);
 
 			bool isConflicted = false;
 			for (int rowIndex = 0; rowIndex < 9; rowIndex++)

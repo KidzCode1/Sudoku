@@ -30,12 +30,12 @@ namespace Sudoku
 										continue;
 									else
 									{
-										List<int> indices = new List<int>();
-										indices.Add(first);
-										indices.Add(second);
-										indices.Add(third);
-										indices.Add(fourth);
-										result = SolveForMany(group, result, indices, groupKind);
+										List<int> indicesToCheck = new List<int>();
+										indicesToCheck.Add(first);
+										indicesToCheck.Add(second);
+										indicesToCheck.Add(third);
+										indicesToCheck.Add(fourth);
+										result = SolveForMany(group, result, indicesToCheck, groupKind);
 									}
 			return result;
 		}

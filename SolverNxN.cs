@@ -13,29 +13,88 @@ namespace Sudoku
 		}
 
 
-		protected SolveResult SolveForMany(ISudokuSquare[] group, SolveResult result, List<int> indices, GroupKind groupKind)
+		protected SolveResult SolveForMany(ISudokuSquare[] group, SolveResult result, List<int> indicesToCheck, GroupKind groupKind)
 		{
-			List<List<int>> allNoteNumbers = new List<List<int>>();
-			foreach (int index in indices)
+			if (!NoteCountsAreSufficient(group, indicesToCheck, out List<List<int>> allNoteNumbers))
+				return SolveResult.None;
+
+			// We have N squares that all contain N notes or fewer (in indicesToCheck)!!!
+			return SolveForManyWithIndicesToCheck(group, ref result, indicesToCheck, groupKind, allNoteNumbers);
+		}
+
+		bool NoteCountsAreSufficient(ISudokuSquare[] group, List<int> indicesToCheck, out List<List<int>> allNoteNumbers)
+		{
+			allNoteNumbers = new List<List<int>>();
+			foreach (int index in indicesToCheck)
 			{
 				ISudokuSquare square = group[index];
 				List<int> squareNoteNumbers = GetNumbers(square.Notes);
 				allNoteNumbers.Add(squareNoteNumbers);
-				if (squareNoteNumbers.Count < 2 || squareNoteNumbers.Count > indices.Count)
-					return SolveResult.None;
+				if (squareNoteNumbers.Count < 2 || squareNoteNumbers.Count > indicesToCheck.Count)
+					return false;
 			}
+			return true;
+		}
 
-			// We have N squares that all contain N notes or fewer!!!
-
+		private SolveResult SolveForManyWithIndicesToCheck(ISudokuSquare[] group, ref SolveResult result, List<int> indicesToCheck, GroupKind groupKind, List<List<int>> allNoteNumbers)
+		{
 			// We want to add the new logic!
 			if (groupKind == GroupKind.Column || groupKind == GroupKind.Row)
 			{
 				// TODO: Group by block
 
-				foreach (List<int> noteNumbers in allNoteNumbers)
+				Dictionary<int, List<int>> blockMap = new Dictionary<int, List<int>>();
+
+				foreach (int index in indicesToCheck)
 				{
-					
+					int key = group[index].Block;
+					if (!blockMap.ContainsKey(key))
+						blockMap.Add(key, new List<int>());
+
+					List<int> allBlockNotes = blockMap[key];
+					List<int> notes = GetNumbers(group[index].Notes);
+					foreach (int note in notes)
+						if (allBlockNotes.IndexOf(note) < 0)
+							allBlockNotes.Add(note);
 				}
+
+				if (blockMap.Count > 1)
+				{
+					foreach (int key in blockMap.Keys)
+					{
+						List<int> targetBlock = blockMap[key];
+						List<int> resultsForThisSubtraction = new List<int>();
+						resultsForThisSubtraction = targetBlock.ToList();
+						foreach (int sourceKey in blockMap.Keys)
+						{
+							List<int> sourceBlock = blockMap[sourceKey];
+							if (targetBlock == sourceBlock)
+								continue;
+
+							// We need to subtract!!
+							foreach (int note in sourceBlock)
+							{
+								if (resultsForThisSubtraction.IndexOf(note) >= 0)
+									resultsForThisSubtraction.Remove(note);
+							}
+						}
+
+						// Subtraction for this block is done!
+
+						if (resultsForThisSubtraction.Count > 0)
+						{
+							// Magic!!! We can remove these from other squares in the targetBlock!
+							ISudokuSquare[] blocks = SudokuBoard.GetBlock(key);
+
+							// We need to make sure that any blocks we examine are not among those already in group[indicesToCheck]
+						}
+					}
+				}
+
+				//foreach (List<int> noteNumbers in allNoteNumbers)
+				//{
+
+				//}
 
 				// TODO: Do we have more than one block?
 				// Yes? It's magic!!!
@@ -50,12 +109,12 @@ namespace Sudoku
 			foreach (List<int> noteNumbers in allNoteNumbers)
 				AddNumbersTo(allNumbersFound, noteNumbers);
 
-			if (allNumbersFound.Count > indices.Count)
+			if (allNumbersFound.Count > indicesToCheck.Count)
 				return SolveResult.None;
 			else
 				for (int i = 0; i < group.Length; i++)
 				{
-					if (indices.Contains(i))
+					if (indicesToCheck.Contains(i))
 						continue;
 
 					// We can actually remove!!!

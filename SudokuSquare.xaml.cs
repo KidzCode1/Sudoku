@@ -12,14 +12,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Diagnostics;
 
 namespace Sudoku
 {
+	[DebuggerDisplay("{Value} ({Notes})")]
 	/// <summary>
 	/// Interaction logic for SudokuSquare.xaml
 	/// </summary>
 	public partial class XamlSudokuSquare : UserControl, ISudokuSquare
 	{
+	 
 		public static bool Updating { get; set; }
 		public event EventHandler ValueChanged;
 		public event EventHandler SquareReceivedFocus;
