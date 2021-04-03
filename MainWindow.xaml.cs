@@ -118,6 +118,8 @@ namespace Sudoku
 			SudokuBoard.AddSquare(8, 6, tbx8_6);
 			SudokuBoard.AddSquare(8, 7, tbx8_7);
 			SudokuBoard.AddSquare(8, 8, tbx8_8);
+
+			SudokuBoard.Initialize();
 		}
 
 		private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -167,18 +169,10 @@ namespace Sudoku
 			SudokuBoard.SelectSquare(row, column);
 		}
 
-		void GetSquarePosition(SudokuSquare square, out int row, out int column)
+		void GetSquarePosition(ISudokuSquare square, out int row, out int column)
 		{
-			for (int c = 0; c < 9; c++)
-				for (int r = 0; r < 9; r++)
-					if (SudokuBoard.squares[r, c] == square)
-					{
-						row = r;
-						column = c;
-						return;
-					}
-			row = -1;
-			column = -1;
+			row = square.Row;
+			column = square.Column;
 		}
 
 		void SetAvailableCharacters()
@@ -263,7 +257,7 @@ namespace Sudoku
 		{
 			Title = message;
 			loadingGame = true;
-			SudokuSquare.Updating = true;
+			XamlSudokuSquare.Updating = true;
 			btnBruteForce.IsEnabled = false;
 			btnHint.IsEnabled = false;
 			try
@@ -279,7 +273,7 @@ namespace Sudoku
 			}
 			finally
 			{
-				SudokuSquare.Updating = false;
+				XamlSudokuSquare.Updating = false;
 				loadingGame = false;
 			}
 		}
@@ -298,29 +292,29 @@ namespace Sudoku
 				LoadGame(easyGame, "Easy Game Loaded");
 		}
 
-		SudokuSquare[] GetColumn(int column)
+		ISudokuSquare[] GetColumn(int column)
 		{
-			SudokuSquare[] result = new SudokuSquare[9];
+			ISudokuSquare[] result = new ISudokuSquare[9];
 			for (int row = 0; row < 9; row++)
 				result[row] = SudokuBoard.squares[row, column];
 
 			return result;
 		}
 
-		SudokuSquare[] GetRow(int row)
+		ISudokuSquare[] GetRow(int row)
 		{
-			SudokuSquare[] result = new SudokuSquare[9];
+			ISudokuSquare[] result = new XamlSudokuSquare[9];
 			for (int column = 0; column < 9; column++)
 				result[column] = SudokuBoard.squares[row, column];
 
 			return result;
 		}
 
-		SudokuSquare[] GetBlock(int row, int column)
+		ISudokuSquare[] GetBlock(int row, int column)
 		{
 			int topRow = 3 * (int)Math.Floor((double)row / 3);
 			int leftColumn = 3 * (int)Math.Floor((double)column / 3);
-			SudokuSquare[] result = new SudokuSquare[9];
+			ISudokuSquare[] result = new XamlSudokuSquare[9];
 			int index = 0;
 			for (int r = topRow; r < topRow + 3; r++)
 				for (int c = leftColumn; c < leftColumn + 3; c++)
@@ -332,7 +326,7 @@ namespace Sudoku
 			return result;
 		}
 
-		void RemoveCharactersFromGroup(List<char> availableChars, SudokuSquare[] group)
+		void RemoveCharactersFromGroup(List<char> availableChars, ISudokuSquare[] group)
 		{
 			for (int i = 0; i < 9; i++)
 			{
@@ -354,20 +348,19 @@ namespace Sudoku
 					SudokuBoard.squares[r, c].FillFromNotesIfPossible();
 		}
 
-		private void ShowNotesForSquare(SudokuSquare square)
+		private void ShowNotesForSquare(ISudokuSquare square)
 		{
 			if (square.GetText().Trim().Length > 0)
 				return;
 
-			GetSquarePosition(square, out int r, out int c);
-			ShowNotesForSquareAt(square, r, c);
+			ShowNotesForSquareAt(square);
 		}
 
-		private void ShowNotesForSquareAt(SudokuSquare square, int r, int c)
+		private void ShowNotesForSquareAt(ISudokuSquare square)
 		{
-			SudokuSquare[] column = GetColumn(c);
-			SudokuSquare[] row = GetRow(r);
-			SudokuSquare[] block = GetBlock(r, c);
+			ISudokuSquare[] column = GetColumn(square.Column);
+			ISudokuSquare[] row = GetRow(square.Row);
+			ISudokuSquare[] block = GetBlock(square.Row, square.Column);
 
 			List<char> availableChars = new List<char>();
 			foreach (char item in tbxAvailableCharacter.Text)
@@ -433,14 +426,17 @@ namespace Sudoku
 			for (int row = 0; row < 9; row++)
 				for (int column = 0; column < 9; column++)
 				{
-					SudokuBoard.squares[row, column].ValueChanged += SudokuSquare_ValueChanged;
-					SudokuBoard.squares[row, column].SquareReceivedFocus += MainWindow_SquareReceivedFocus;
+					if (SudokuBoard.squares[row, column] is XamlSudokuSquare sudokuSquare)
+					{
+						sudokuSquare.ValueChanged += SudokuSquare_ValueChanged;
+						sudokuSquare.SquareReceivedFocus += MainWindow_SquareReceivedFocus;
+					}
 				}
 		}
 
 		private void MainWindow_SquareReceivedFocus(object sender, EventArgs e)
 		{
-			if (sender is SudokuSquare sudokuSquare)
+			if (sender is XamlSudokuSquare sudokuSquare)
 				SudokuBoard.SelectedSquare = sudokuSquare;
 		}
 
@@ -451,14 +447,14 @@ namespace Sudoku
 
 		bool CheckForConflicts(int r, int c, bool setHasConflictedProperty = true)
 		{
-			SudokuSquare thisSquare = SudokuBoard.squares[r, c];
+			ISudokuSquare thisSquare = SudokuBoard.squares[r, c];
 			string text = thisSquare.GetText();
 			if (string.IsNullOrWhiteSpace(text))
 				return false;
 
-			SudokuSquare[] column = GetColumn(c);
-			SudokuSquare[] row = GetRow(r);
-			SudokuSquare[] block = GetBlock(r, c);
+			ISudokuSquare[] column = GetColumn(c);
+			ISudokuSquare[] row = GetRow(r);
+			ISudokuSquare[] block = GetBlock(r, c);
 
 			bool isConflicted = false;
 			for (int rowIndex = 0; rowIndex < 9; rowIndex++)
@@ -547,7 +543,7 @@ namespace Sudoku
 			for (int row = 0; row < 9; row++)
 				for (int column = 0; column < 9; column++)
 				{
-					SudokuSquare sudokuSquare = SudokuBoard.squares[row, column];
+					ISudokuSquare sudokuSquare = SudokuBoard.squares[row, column];
 					if (sudokuSquare.IsEmpty)
 						return false;
 				}
@@ -566,13 +562,13 @@ namespace Sudoku
 				for (int column = startingColumn; column < 9; column++)
 				{
 					startingColumn = 0;
-					SudokuSquare sudokuSquare = SudokuBoard.squares[row, column];
+					ISudokuSquare sudokuSquare = SudokuBoard.squares[row, column];
 					if (!sudokuSquare.IsEmpty)
 						continue;
 					// Magic - I have an empty square!!!
 					if (sudokuSquare.Notes == "")
 					{
-						ShowNotesForSquareAt(sudokuSquare, row, column);
+						ShowNotesForSquareAt(sudokuSquare);
 						if (sudokuSquare.Notes == "")  // That means we have a conflict.
 							return BruteForceAttack(row, column + 1);
 					}
@@ -613,7 +609,7 @@ namespace Sudoku
 
 		private void StartBruteForceAttack()
 		{
-			SudokuSquare.Updating = true;
+			XamlSudokuSquare.Updating = true;
 			try
 			{
 				numCombinationsTried = 0;
@@ -621,7 +617,7 @@ namespace Sudoku
 			}
 			finally
 			{
-				SudokuSquare.Updating = false;
+				XamlSudokuSquare.Updating = false;
 			}
 		}
 
@@ -637,7 +633,8 @@ namespace Sudoku
 						if (!foundOneYet)
 						{
 							foundOneYet = true;
-							SudokuBoard.squares[row, column].Background = new SolidColorBrush(Color.FromRgb(163, 247, 176));
+							if (SudokuBoard.squares[row, column] is XamlSudokuSquare sudokuSquare)
+								sudokuSquare.Background = new SolidColorBrush(Color.FromRgb(163, 247, 176)); // UI change here.
 						}
 						else
 							SudokuBoard.squares[row, column].Value = char.MinValue;

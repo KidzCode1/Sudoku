@@ -18,7 +18,7 @@ namespace Sudoku
 	/// <summary>
 	/// Interaction logic for SudokuSquare.xaml
 	/// </summary>
-	public partial class SudokuSquare : UserControl, ISudokuSquare
+	public partial class XamlSudokuSquare : UserControl, ISudokuSquare
 	{
 		public static bool Updating { get; set; }
 		public event EventHandler ValueChanged;
@@ -85,7 +85,7 @@ namespace Sudoku
 			}
 		}
 
-		public SudokuSquare()
+		public XamlSudokuSquare()
 		{
 			InitializeComponent();
 		}
@@ -100,8 +100,8 @@ namespace Sudoku
 			SquareReceivedFocus?.Invoke(sender, e);
 		}
 
-		public int Column => Grid.GetColumn(this);
-		public int Row => Grid.GetRow(this);
+		public int GridColumn => Grid.GetColumn(this);
+		public int GridRow => Grid.GetRow(this);
 		public static int NumTextChangesToSkip = 0;
 		private void tbxValue_TextChanged(object sender, TextChangedEventArgs e)
 		{
@@ -122,12 +122,12 @@ namespace Sudoku
 					string whatChanged = lineText.Substring(textChange.Offset, textChange.AddedLength);
 					if (MainWindow.availableChars.Contains(whatChanged))
 					{
-						CommandInvoker.DoCommand(new TextChangedCommand(lastValue, whatChanged, Row, Column));
+						CommandInvoker.DoCommand(new TextChangedCommand(lastValue, whatChanged, GridRow, GridColumn));
 						//textBox.Text = whatChanged;
 					}
 					else
 					{
-						CommandInvoker.DoCommand(new TextChangedCommand(lastValue, whatChanged, Row, Column));
+						CommandInvoker.DoCommand(new TextChangedCommand(lastValue, whatChanged, GridRow, GridColumn));
 						//textBox.Text = " ";
 					}
 				}
@@ -203,7 +203,9 @@ namespace Sudoku
 
 		public bool IsEmpty => Value == char.MinValue || Value == '\0';
 		public bool HasTestValue { get; set; }
-
+		public int Row { get; set; }
+		public int Column { get; set; }
+		public int Block { get; set; }
 
 		public void SetNotes(string notes)
 		{
